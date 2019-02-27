@@ -1,4 +1,7 @@
 # This is the helper function.
+'''
+ryd
+'''
 
 
 
@@ -16,10 +19,13 @@ def dataProcess(df):
 
     train = df
 
+    # Dropping outliers
     train.drop(train[(train['OverallQual'] < 5) & (
         train['SalePrice'] > 200000)].index, inplace=True)
     train.drop(train[(train['GrLivArea'] > 4000) & (
         train['SalePrice'] < 300000)].index, inplace=True)
+
+    # MISSING VALUES:
 
     # BASEMENT
     train.BsmtCond = train.BsmtCond.fillna(0)
@@ -44,7 +50,7 @@ def dataProcess(df):
     # FENCE
     train.Fence = train.Fence.fillna("None")
 
-    # FENCE
+    # POOL QUALITY
     train.PoolQC = train.PoolQC.fillna("None")
 
     # ALLEY
