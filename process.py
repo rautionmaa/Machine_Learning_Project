@@ -1,7 +1,4 @@
 # This is the helper function.
-'''
-ryd
-'''
 
 
 
@@ -19,13 +16,10 @@ def dataProcess(df):
 
     train = df
 
-    # Dropping outliers
     train.drop(train[(train['OverallQual'] < 5) & (
         train['SalePrice'] > 200000)].index, inplace=True)
     train.drop(train[(train['GrLivArea'] > 4000) & (
         train['SalePrice'] < 300000)].index, inplace=True)
-
-    # MISSING VALUES:
 
     # BASEMENT
     train.BsmtCond = train.BsmtCond.fillna(0)
@@ -50,7 +44,7 @@ def dataProcess(df):
     # FENCE
     train.Fence = train.Fence.fillna("None")
 
-    # POOL QUALITY
+    # FENCE
     train.PoolQC = train.PoolQC.fillna("None")
 
     # ALLEY
@@ -70,6 +64,8 @@ def dataProcess(df):
 
     # MASONARY
     train.MasVnrType = train.MasVnrType.fillna("None")
+    train.MasVnrArea = train.MasVnrArea.fillna(0)
+    
 
     # ZONING - Most common
     train.MSZoning = train.MSZoning.fillna(train.MSZoning.mode()[0])
@@ -123,6 +119,17 @@ def dataProcess(df):
         lambda s: mymap.get(s) if s in mymap else s).astype(int)
     train["GarageCond"] = train["GarageCond"].apply(
         lambda s: mymap.get(s) if s in mymap else s).astype(int)
+    
+    # PavedDrive
+    train["PavedDrive"] = train.PavedDrive.replace(
+        {'N':0, 'P':1, 'Y':2})
+    
+    # SaleCondition: House completed before sale or not
+    train["SaleCondition"] = train.SaleCondition.replace({"Abnorml" : 0, "Alloca" : 0, "AdjLand" : 0, 
+                                                      "Family" : 0, "Normal" : 0, "Partial" : 1})
+    
+    # Utilities. Drop column.
+    train = train.drop(['Utilities'], axis=1)
 
     for col in ['BsmtFinType1', 'BsmtFinType2']:
         pd.Categorical(train[col], categories=['GLQ', 'ALQ', 'BLQ', 'Rec', 'LwQ'])
@@ -166,8 +173,6 @@ def dataProcess(df):
     train['CentralAir'] = train['CentralAir'].apply(
         lambda x: 0 if x == 'N' else 1)
     train['Street'] = train['Street'].apply(lambda x: 0 if x == 'Pave' else 1)
-    train['PavedDrive'] = train['PavedDrive'].apply(
-        lambda x: 0 if x == 'Y' else 1)
     train['LotShape'] = train['LotShape'].apply(
         lambda x: 1 if x == 'Reg' else 0)
     train['CentralAir'] = train['CentralAir'].apply(
